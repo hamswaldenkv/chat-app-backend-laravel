@@ -16,20 +16,7 @@ class AssetController extends Controller
      */
     public function index(Request $request)
     {
-        $recipient = ['hamswaldenkv@gmail.com'];
-
-        Mail::to($recipient)->send(new ParticipantJoined());
-        return response()->json(['recipient' => $recipient, 'method' => $request->method()]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->noContent();
     }
 
     /**
@@ -40,54 +27,33 @@ class AssetController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        return response()->json([
-            'id' => $id,
-            'photos' => []
-        ]);
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+        try {
+            $request->validate([
+                'file' => 'required|mimes:csv,txt,xlx,xls,pdf,jpeg,png,jpg,mp4,docx,doc'
+            ]);
+            $file = $request->file('file');
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+            $name = $file->hashName();
+            $extension = $file->getClientOriginalExtension();
+            $fileName = $file->getClientOriginalName();
+
+            $store_path = 'uploads/' . date('Ymd');
+            $path = $file->storeAs($store_path, $name, 'public');
+
+
+            $response['asset']['url'] = asset('/storage/' . $path);
+            $response['asset']['original_name'] = $fileName;
+            $response['asset']['name'] = $name;
+            return response($response);
+        } catch (\Exception $th) {
+            return response([
+                'error_type'    => 'Exception occured',
+                'error_message' => $th->getMessage(),
+                'error_code'    => 0
+            ]);
+        }
     }
 }

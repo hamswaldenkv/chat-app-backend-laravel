@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function () {
     Route::resource('events', EventController::class);
+    Route::resource('uploads', AssetController::class);
 
     Route::prefix('auth')->group(function () {
         Route::resource('login', SigninController::class);
