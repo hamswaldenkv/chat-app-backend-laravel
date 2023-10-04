@@ -1,0 +1,7 @@
+php artisan make:event ParticipantJoined
+php artisan make:event MessageSent
+
+php artisan make:listener ParticipantJoinedNotification --event=ParticipantJoined
+php artisan make:listener MessageSentNotification --event=MessageSent
+
+php artisan make:model Event --migration --factory --force 
