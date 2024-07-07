@@ -102,6 +102,12 @@ class MessageController extends Controller
             $chat->save();
             DB::commit();
 
+            $user_ids = [];
+            foreach (explode(',', $chat->user_ids) as $key) {
+                if ($key != $user->id) $user_ids[]  = $key;
+            }
+
+
 
             // send event
             event(new MessageSent($chat->chat_id, $msg->content));

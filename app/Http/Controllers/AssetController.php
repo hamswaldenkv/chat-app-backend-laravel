@@ -52,7 +52,8 @@ class AssetController extends Controller
             return response([
                 'error_type'    => 'Exception occured',
                 'error_message' => $th->getMessage(),
-                'error_code'    => 0
+                'error_code'    => 0,
+                'request'       => $request->all()
             ]);
         }
     }

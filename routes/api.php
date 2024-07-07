@@ -7,6 +7,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\SigninController;
+use App\Http\Controllers\SigninEventController;
 use App\Http\Controllers\SignupController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::resource('login', SigninController::class);
         Route::resource('signup', SignupController::class);
+        Route::resource('event', SigninEventController::class);
     });
 
     Route::middleware(['auth:sanctum'])->group(function () {

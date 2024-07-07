@@ -22,7 +22,7 @@ class Chat extends Model
         return $this->belongsTo(Event::class, 'event_id', 'id');
     }
 
-    public function title()
+    public function title($user_ids)
     {
         $title = 'Conversation';
 
@@ -30,7 +30,6 @@ class Chat extends Model
             $title = $this->event->title;
         } else {
             $names = [];
-            $user_ids = explode(',', $this->user_ids);
             $users = User::query()->whereIn('id', $user_ids)->get();
             foreach ($users as $user) $names[] = $user->name;
 

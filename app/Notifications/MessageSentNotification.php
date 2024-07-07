@@ -14,12 +14,22 @@ class MessageSentNotification extends Notification
     /**
      * @var string
      */
+    protected $chat_id;
+
+    /**
+     * @var string
+     */
     protected $title;
 
     /**
      * @var string
      */
     protected $message;
+
+    /**
+     * @var string
+     */
+    protected $image;
 
     /**
      * @var array
@@ -31,11 +41,13 @@ class MessageSentNotification extends Notification
      *
      * @return void
      */
-    public function __construct(string $title, string $message, array $tokens)
+    public function __construct(array $tokens, string $chat_id, string $title, string $message, string $image = null)
     {
+        $this->tokens = $tokens;
+        $this->chat_id = $chat_id;
         $this->title = $title;
         $this->message = $message;
-        $this->tokens = $tokens;
+        $this->image = $image;
     }
 
     /**
@@ -73,16 +85,17 @@ class MessageSentNotification extends Notification
         return (new FirebaseMessage())
             ->withTitle($this->title)
             ->withBody($this->message)
-            ->withImage('https://firebase.google.com/images/social.png')
+            ->withImage($this->image)
             ->withIcon('https://seeklogo.com/images/F/firebase-logo-402F407EE0-seeklogo.com.png')
             ->withSound('default')
-            ->withClickAction('https://www.google.com')
+            // ->withClickAction('https://www.google.com')
             ->withPriority('high')
             ->withAdditionalData([
-                'color' => '#rrggbb',
-                'badge' => 0,
+                'color'     => '#037ef3',
+                'badge'     => 0,
+                'chatId'    => $this->chat_id,
                 'eventName' => 'onIncomingMessage',
-                'eventData' => [],
+                'eventData' => ['chat_id' => $this->chat_id, 'thread_id' => $this->chat_id],
             ])
             ->asNotification($this->tokens);
     }

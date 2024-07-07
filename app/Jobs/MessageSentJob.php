@@ -42,22 +42,28 @@ class MessageSentJob implements ShouldQueue
     public function handle()
     {
         $message = $this->message;
+        $metafield = json_decode($message->metafield);
         $chat = $message->chat;
+        $user = $message->user;
 
 
         $tokens = [];
-        $user_ids = explode(',', $chat->user_ids);
+        $user_ids = [];
+        foreach (explode(',', $chat->user_ids) as $key) {
+            if ($key != $user->id) $user_ids[]  = $key;
+        }
         $devices = UserDevice::query()->whereIn('user_id', $user_ids)->get();
+        foreach ($devices as $device) $tokens[] = $device->firebase_token;
 
 
         // send push notification
-        foreach ($devices as $device) $tokens[] = $device->firebase_token;
-
         if (count($tokens) > 0) {
             Notification::send(null, new MessageSentNotification(
-                'Nouveau message',
+                $tokens,
+                $chat->chat_id,
+                'Nouveau message de ' . $user->name,
                 $message->content,
-                $tokens
+                $metafield->photo_url,
             ));
         }
     }
